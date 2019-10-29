@@ -1,31 +1,44 @@
 import * as React from "react";
 
-export type MatchFunc = (value: any) => boolean;
+export type MatchFunc<S> = (value: any, state?: S) => boolean;
 
-export type ReplacerFunc = (value: any) => React.ReactElement;
+export type ReplacerFunc<S> = (value: any, state?: S) => React.ReactElement;
 
-export type ReplacerProps =
-    | {
-        match: MatchFunc;
-        replace: ReplacerFunc;
+export type StateUpdateFunc<S> = (input: any, state?: S) => S;
+
+export type ReplacerSharedProps<StateType=any> = {
+    replace: ReplacerFunc<StateType>;
+    updateState?: StateUpdateFunc<StateType>;
+    initialState?: StateType;
+}
+
+export type ReplacerProps<StateType = any> = ReplacerSharedProps<StateType> & 
+    ({
+        match: MatchFunc<StateType>;
     }
     | {
         matchElement: React.ComponentType | string;
-        replace: ReplacerFunc;
     }
     | {
-        matchLiteral: MatchFunc;
-        replace: ReplacerFunc;
-    };
+        matchLiteral: MatchFunc<StateType>;
+    });
 
-function replaceTree(
+function replaceTree<StateType>(
     input: any,
-    props: { match: MatchFunc; replace: ReplacerFunc },
+    props: { 
+        match: MatchFunc<StateType>; 
+        replace: ReplacerFunc<StateType>;
+        updateState?: StateUpdateFunc<StateType>;
+    },
     index?: any,
+    state?: StateType,
     skipMatch: boolean = false
 ): React.ReactElement | React.ReactElement[] {
-    if (!skipMatch && props.match(input)) {
-        return replaceTree(props.replace(input), props, index, true);
+    if (props.updateState) {
+        state = props.updateState(input, state);
+    }
+    if (!skipMatch && props.match(input, state)) {
+        return replaceTree(props.replace(input, state), props, index, state, true);
     } else if (React.isValidElement(input)) {
         let element = (input as any) as React.ReactElement;
         if (typeof element.type === "function") {
@@ -34,11 +47,11 @@ function replaceTree(
         return React.cloneElement(element, {
             ...element.props,
             key: index,
-            children: replaceTree(element.props.children, props, index)
+            children: replaceTree(element.props.children, props, index, state)
         });
     } else if (Array.isArray(input)) {
         return input.reduce(
-            (acc, item, index) => acc.concat(replaceTree(item, props, index)),
+            (acc, item, index) => acc.concat(replaceTree(item, props, index, state)),
             []
         );
     } else {
@@ -46,11 +59,12 @@ function replaceTree(
     }
 }
 
-function Replacer(
-    props: React.PropsWithChildren<ReplacerProps>
+function Replacer<StateType=any>(
+    props: React.PropsWithChildren<ReplacerProps<StateType>>
 ): React.ReactElement {
-    let match: MatchFunc = () => false;
-    let replace = props.replace;
+    let match: MatchFunc<StateType> = () => false;
+    const replace = props.replace;
+    const updateState = props.updateState;
     if ("matchElement" in props) {
         match = i => React.isValidElement(i) && i.type === props.matchElement;
     } else if ("matchLiteral" in props) {
@@ -59,7 +73,7 @@ function Replacer(
     } else {
         match = props.match;
     }
-    return replaceTree(props.children, { match, replace }) as any;
+    return replaceTree(props.children, { match, replace, updateState }, undefined, props.initialState) as any;
 }
 
 export { Replacer };
