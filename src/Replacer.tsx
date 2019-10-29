@@ -1,8 +1,8 @@
-import React, { ReactElement, ComponentType, PropsWithChildren } from "react";
+import * as React from "react";
 
 export type MatchFunc = (value: any) => boolean;
 
-export type ReplacerFunc = (value: any) => ReactElement;
+export type ReplacerFunc = (value: any) => React.ReactElement;
 
 export type ReplacerProps =
     | {
@@ -10,7 +10,7 @@ export type ReplacerProps =
         replace: ReplacerFunc;
     }
     | {
-        matchElement: ComponentType | string;
+        matchElement: React.ComponentType | string;
         replace: ReplacerFunc;
     }
     | {
@@ -23,11 +23,11 @@ function replaceTree(
     props: { match: MatchFunc; replace: ReplacerFunc },
     index?: any,
     skipMatch: boolean = false
-): ReactElement | ReactElement[] {
+): React.ReactElement | React.ReactElement[] {
     if (!skipMatch && props.match(input)) {
         return replaceTree(props.replace(input), props, index, true);
     } else if (React.isValidElement(input)) {
-        let element = (input as any) as ReactElement;
+        let element = (input as any) as React.ReactElement;
         if (typeof element.type === "function") {
             element = (element.type as any)(element.props);
         }
@@ -47,9 +47,9 @@ function replaceTree(
 }
 
 function Replacer(
-    props: PropsWithChildren<ReplacerProps>
-): ReactElement {
-    let match: MatchFunc = v => false;
+    props: React.PropsWithChildren<ReplacerProps>
+): React.ReactElement {
+    let match: MatchFunc = () => false;
     let replace = props.replace;
     if ("matchElement" in props) {
         match = i => React.isValidElement(i) && i.type === props.matchElement;
