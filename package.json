@@ -1,6 +1,6 @@
 {
     "name": "react-element-replace",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "A React Component that transforms its subtree, replacing elements following the provided rules.",
     "main": "src/index.ts",
     "repository": {
