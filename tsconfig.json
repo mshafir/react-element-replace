@@ -1,6 +1,6 @@
 {
     "include": [
-        "./src/*"
+        "./src/*", "index.ts"
     ],
     "compilerOptions": {
         "lib": [

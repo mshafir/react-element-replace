@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Replacer } from "../src/index";
+import { Replacer } from "../index";
 
 
 function TestComponentWithObject(props) {
