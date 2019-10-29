@@ -2,6 +2,7 @@
     "name": "react-element-replace",
     "version": "0.1.2",
     "description": "A React Component that transforms its subtree, replacing elements following the provided rules.",
+    "main": "src/index.ts",
     "repository": {
         "type": "git",
         "url": "git@github.com:mshafir/react-element-replace.git"

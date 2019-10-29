@@ -1,5 +1,5 @@
 import React from 'react';
-import { Replacer } from "../index";
+import { Replacer } from "../src/index";
 
 
 function TestComponent(props) {
