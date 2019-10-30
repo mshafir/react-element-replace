@@ -41,7 +41,7 @@ function Replacer<StateType = any>(
         match = props.match;
     }
     const visitor = new ReplaceVisitor(match, replace, updateState);
-    return <>{traverseElementTree(props.children, visitor)}</>;
+    return <>{traverseElementTree(props.children, visitor, props.initialState)}</>;
 }
 
 export { Replacer };

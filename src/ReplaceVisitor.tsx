@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Visitor, NextFunc } from "./traverse-element-tree";
+import { Visitor } from "./traverse-element-tree";
 
 const {
     isValidElement,
@@ -15,24 +15,20 @@ export type StateUpdateFunc<S> = (input: React.ReactNode, state?: S) => S;
 export class ReplaceVisitor<S = any> implements Visitor<React.ReactNode, S> {
     match: MatchFunc<S>;
     replace: ReplacerFunc<any,S>;
-    updateState?: StateUpdateFunc<S>;
+    stateUpdater?: StateUpdateFunc<S>;
     constructor(match: MatchFunc<S>, replace: ReplacerFunc<any,S>, updateState?: StateUpdateFunc<S>) {
         this.match = match;
         this.replace = replace;
-        this.updateState = updateState;
+        this.stateUpdater = updateState;
     }
-    visit(element: React.ReactNode, state: S, next?: NextFunc<React.ReactNode, S>): React.ReactNode {
-        // update the state
-        const newState = this.updateState ? this.updateState(element, state) : state;
-
-        // grab the traversal result
-        let result = next ? next(newState) : element;
-
-        // perform the replace
+    updateState(state: S): S {
+        return this.stateUpdater ? this.stateUpdater(state) : state;
+    }
+    visit(element: React.ReactNode, state: S): React.ReactNode {
         if (this.match(element, state)) {
             return this.replace(element, state);
         } else {
-            return result;
+            return element;
         }
     }
     combine(parent: React.ReactNode | null, children: React.ReactNode | React.ReactNode[], _: S): React.ReactNode {

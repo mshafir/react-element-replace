@@ -4,10 +4,9 @@ const {
     isValidElement
 } = React;
 
-export type NextFunc<T,S> = (newState: S) => T;
-
 export interface Visitor<T=any, S=any> {
-    visit(element: React.ReactNode, state: S, next?: NextFunc<T,S>): T;
+    updateState(state: S): S;
+    visit(element: React.ReactNode, state: S): T;
     combine(parent: React.ReactNode | null, children: T | T[], state: S) : T;
 }
 
@@ -16,10 +15,13 @@ export function traverseElementTree<T=any, S=any>(
     visitor: Visitor<T,S>,
     state?: any
 ) : T {
-    function visit(next?: React.ReactNode) {
-        return visitor.visit(node, state, next ? 
-            (newState: S) => traverseElementTree(next, visitor, newState) : 
-            undefined);
+    state = visitor.updateState(state);
+
+    function visit(target: React.ReactNode) {
+        return visitor.visit(target, state);
+    }
+    function traverse(target: React.ReactNode) {
+        return traverseElementTree(target, visitor, state);
     }
 
     if (isValidElement(node)) {
@@ -29,22 +31,23 @@ export function traverseElementTree<T=any, S=any>(
             } else {
                 node = (node.type as any)(node.props);
             }
-            return traverseElementTree(node, visitor, state);
+            return traverse(node);
         } else if (node.props && 'children' in node.props) {
             const children : any | any[] = node.props['children'];
             const traversed = Array.isArray(children) ? 
                 children.map((child: any) => 
-                    traverseElementTree(child, visitor, state)) :
-                traverseElementTree(children, visitor, state);
-            return visitor.visit(visitor.combine(node, traversed, state), state);
+                    traverse(child)) :
+                traverse(children);
+            const combined = visitor.combine(node, traversed, state);
+            return visit(combined);
         } else {
-            return visit();
+            return visit(node);
         }
     } else if (Array.isArray(node)) {
         const visited = node.map(
-            (item: React.ReactNode) => visit(item));
+            (item: React.ReactNode) => traverse(item));
         return visitor.combine(null, visited, state);
     } else {
-        return visit();
+        return visit(node);
     }
 }
