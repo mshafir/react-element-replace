@@ -22,7 +22,7 @@ test("object to string replace", () => {
     const component = create(
         <Replacer
             matchLiteral={i => typeof i === "object"}
-            replace={i => <>{JSON.stringify(i)}</>}>
+            replace={(i: any) => <>{JSON.stringify(i)}</>}>
             <TestComponentWithObject value="text">
                 <TestComponentWithObject value="text">
                     {{ test: 123 }}

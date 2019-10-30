@@ -4,10 +4,10 @@ const {
     isValidElement
 } = React;
 
+export type ChildrenFunc<T, S> = (newState: S) => T | T[];
+
 export interface Visitor<T=any, S=any> {
-    updateState(state: S): S;
-    visit(element: React.ReactNode, state: S): T;
-    combine(parent: React.ReactNode | null, children: T | T[], state: S) : T;
+    visit(element: React.ReactNode, state: S, children?: ChildrenFunc<T,S>): T;
 }
 
 export function traverseElementTree<T=any, S=any>(
@@ -15,13 +15,11 @@ export function traverseElementTree<T=any, S=any>(
     visitor: Visitor<T,S>,
     state?: any
 ) : T {
-    state = visitor.updateState(state);
-
-    function visit(target: React.ReactNode) {
-        return visitor.visit(target, state);
+    function visit(target: React.ReactNode, children?: ChildrenFunc<T,S>) {
+        return visitor.visit(target, state, children);
     }
-    function traverse(target: React.ReactNode) {
-        return traverseElementTree(target, visitor, state);
+    function traverse(target: React.ReactNode, newState?: S) {
+        return traverseElementTree(target, visitor, newState || state);
     }
 
     if (isValidElement(node)) {
@@ -34,20 +32,18 @@ export function traverseElementTree<T=any, S=any>(
             return traverse(node);
         } else if (node.props && 'children' in node.props) {
             const children : any | any[] = node.props['children'];
-            const traversed = Array.isArray(children) ? 
-                children.map((child: any) => 
-                    traverse(child)) :
-                traverse(children);
-            const combined = visitor.combine(node, traversed, state);
-            return visit(combined);
-        } else {
-            return visit(node);
+            const traverseChildren : ChildrenFunc<T,S> = (newState: S) =>
+                Array.isArray(children) ? 
+                    children.map((child: any) => 
+                        traverse(child, newState)) :
+                    traverse(children, newState);
+            return visit(node, traverseChildren);
         }
     } else if (Array.isArray(node)) {
-        const visited = node.map(
-            (item: React.ReactNode) => traverse(item));
-        return visitor.combine(null, visited, state);
-    } else {
-        return visit(node);
+        const nodeArray = node;
+        const traverseChildren : ChildrenFunc<T,S> = (newState: S) =>
+            nodeArray.map((item: React.ReactNode) => traverse(item, newState));
+        return visit(node, traverseChildren);
     }
+    return visit(node);
 }

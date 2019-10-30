@@ -1,12 +1,18 @@
 import * as React from "react";
-import { traverseElementTree } from "./traverse-element-tree";
-import { MatchFunc, ReplacerFunc, StateUpdateFunc, ReplaceVisitor } from './ReplaceVisitor';
+import { traverseElementTree, ChildrenFunc } from "./traverse-element-tree";
+import { rebuildElement } from './rebuild-element';
 
 const {
     isValidElement
 } = React;
 
-export type ReplacerSharedProps<StateType = any> = {
+export type MatchFunc<S> = (value: React.ReactNode, state?: S) => boolean;
+
+export type ReplacerFunc<V extends React.ReactNode, S> = (value: V, state?: S) => React.ReactNode;
+
+export type StateUpdateFunc<S> = (input: React.ReactNode, state?: S) => S;
+
+type ReplacerSharedProps<StateType = any> = {
     replace: ReplacerFunc<any, StateType>;
     updateState?: StateUpdateFunc<StateType>;
     initialState?: StateType;
@@ -26,22 +32,36 @@ export type ReplacerProps<StateType = any> = ReplacerSharedProps<StateType> &
         replace: ReplacerFunc<React.ReactNode, StateType>;
     });
 
+export function replaceInTree<S = any>(node: React.ReactNode, args: ReplacerProps<S>) : React.ReactNode {
+    let match: MatchFunc<S>;
+    const replace = args.replace;
+    const updateState = args.updateState;
+    if ("matchElement" in args) {
+        match = i => isValidElement(i) && i.type === args.matchElement;
+    } else if ("matchLiteral" in args) {
+        match = i =>
+            !Array.isArray(i) && !isValidElement(i) && args.matchLiteral(i);
+    } else {
+        match = args.match;
+    }
+    return traverseElementTree(node, {
+        visit(element: React.ReactNode, state: S, children: ChildrenFunc<React.ReactNode, S>): React.ReactNode {
+            const newState = updateState ? updateState(state) : state;
+            const resolvedChildren = children ? children(newState) : undefined;
+            const result = rebuildElement(element, resolvedChildren);
+            if (match(result, newState)) {
+                return replace(result, newState);
+            } else {
+                return result;
+            }
+        }
+    }, args.initialState)
+}
+
 function Replacer<StateType = any>(
     props: React.PropsWithChildren<ReplacerProps<StateType>>
 ): React.ReactElement {
-    let match: MatchFunc<StateType> = () => false;
-    const replace = props.replace;
-    const updateState = props.updateState;
-    if ("matchElement" in props) {
-        match = i => isValidElement(i) && i.type === props.matchElement;
-    } else if ("matchLiteral" in props) {
-        match = i =>
-            !Array.isArray(i) && !isValidElement(i) && props.matchLiteral(i);
-    } else {
-        match = props.match;
-    }
-    const visitor = new ReplaceVisitor(match, replace, updateState);
-    return <>{traverseElementTree(props.children, visitor, props.initialState)}</>;
+    return <>{replaceInTree(props.children, props)}</>;
 }
 
 export { Replacer };
