@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`component replace 1`] = `
+<div>
+   :
+   
+  <div
+    style={
+      Object {
+        "border": "1px solid black",
+        "display": "inline-block",
+      }
+    }
+  >
+    Label Me
+  </div>
+  <div>
+    <div>
+       :
+       
+      <div
+        style={
+          Object {
+            "border": "1px solid black",
+            "display": "inline-block",
+          }
+        }
+      >
+        Label Me
+      </div>
+      <div />
+    </div>
+  </div>
+</div>
+`;

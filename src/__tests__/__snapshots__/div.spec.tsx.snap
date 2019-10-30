@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`div color replace 1`] = `
+Array [
+  <div
+    style={
+      Object {
+        "color": "blue",
+        "padding": "3px",
+      }
+    }
+  >
+     :
+     
+    <div
+      style={
+        Object {
+          "border": "1px solid black",
+          "color": "blue",
+          "display": "inline-block",
+          "padding": "3px",
+        }
+      }
+    >
+      Label Me
+    </div>
+    <div
+      style={
+        Object {
+          "color": "blue",
+          "padding": "3px",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "color": "blue",
+            "padding": "3px",
+          }
+        }
+      >
+         :
+         
+        <div
+          style={
+            Object {
+              "border": "1px solid black",
+              "color": "blue",
+              "display": "inline-block",
+              "padding": "3px",
+            }
+          }
+        >
+          Label Me
+        </div>
+        <div
+          style={
+            Object {
+              "color": "blue",
+              "padding": "3px",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>,
+  <div
+    style={
+      Object {
+        "color": "blue",
+        "padding": "3px",
+      }
+    }
+  >
+     :
+     
+    <div
+      style={
+        Object {
+          "border": "1px solid black",
+          "color": "blue",
+          "display": "inline-block",
+          "padding": "3px",
+        }
+      }
+    >
+      Label Me
+    </div>
+    <div
+      style={
+        Object {
+          "color": "blue",
+          "padding": "3px",
+        }
+      }
+    />
+  </div>,
+]
+`;

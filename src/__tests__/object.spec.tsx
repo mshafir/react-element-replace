@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { Replacer } from "../src/index";
+import * as React from 'react';
+import { Replacer } from "..";
+import { create } from 'react-test-renderer';
 
+const { useState } = React;
 
-function TestComponentWithObject(props) {
+function TestComponentWithObject(props: { label?: string, value: string, children: any }) {
     const [label, setLabel] = useState<any>("a string");
     return (
         <div>
@@ -16,8 +18,8 @@ function TestComponentWithObject(props) {
     );
 }
 
-function ReplaceObjectExample() {
-    return (
+test("object to string replace", () => {
+    const component = create(
         <Replacer
             matchLiteral={i => typeof i === "object"}
             replace={i => <>{JSON.stringify(i)}</>}>
@@ -28,6 +30,9 @@ function ReplaceObjectExample() {
             </TestComponentWithObject>
         </Replacer>
     );
-}
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
 
-export { ReplaceObjectExample };
+    
+
+});

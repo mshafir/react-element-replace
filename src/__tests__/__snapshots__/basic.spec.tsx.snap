@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic div replace 1`] = `
+Array [
+  "This was a div",
+  <span>
+    Don't Replace Me
+  </span>,
+]
+`;
+
+exports[`no-op replace 1`] = `
+<div>
+  <div>
+    1
+  </div>
+  <div>
+    <div>
+      2
+    </div>
+  </div>
+</div>
+`;

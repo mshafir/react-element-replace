@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`object to string replace 1`] = `
+<div>
+  <div>
+    Test
+  </div>
+  <span>
+    A span
+  </span>
+  <div>
+    {"comment":"text"}
+  </div>
+  <div>
+    <div>
+      <div>
+        Test
+      </div>
+      <span>
+        A span
+      </span>
+      <div>
+        {"comment":"text"}
+      </div>
+      <div>
+        {"test":123}
+      </div>
+      <div>
+        a string
+      </div>
+      <button
+        onClick={[Function]}
+      >
+        Testing
+      </button>
+    </div>
+  </div>
+  <div>
+    a string
+  </div>
+  <button
+    onClick={[Function]}
+  >
+    Testing
+  </button>
+</div>
+`;
