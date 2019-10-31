@@ -34,8 +34,7 @@ export type ReplacerProps<StateType = any> = ReplacerSharedProps<StateType> &
 
 export function replaceInTree<S = any>(node: React.ReactNode, args: ReplacerProps<S>) : React.ReactNode {
     let match: MatchFunc<S>;
-    const replace = args.replace;
-    const updateState = args.updateState;
+    const { replace, updateState } = args;
     if ("matchElement" in args) {
         match = i => isValidElement(i) && i.type === args.matchElement;
     } else if ("matchLiteral" in args) {

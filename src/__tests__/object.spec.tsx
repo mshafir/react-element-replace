@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Replacer } from "..";
-import { create } from 'react-test-renderer';
+import { create, act } from 'react-test-renderer';
+// import { traverseElementTree, ChildrenFunc } from '../traverse-element-tree';
 
 const { useState } = React;
 
@@ -19,20 +20,50 @@ function TestComponentWithObject(props: { label?: string, value: string, childre
 }
 
 test("object to string replace", () => {
-    const component = create(
+    const Component = 
         <Replacer
-            matchLiteral={i => typeof i === "object"}
-            replace={(i: any) => <>{JSON.stringify(i)}</>}>
+                matchLiteral = { i => typeof i === "object" }
+                replace = {(i: any) => <>{JSON.stringify(i)}</>
+            }>
             <TestComponentWithObject value="text">
                 <TestComponentWithObject value="text">
                     {{ test: 123 }}
                 </TestComponentWithObject>
             </TestComponentWithObject>
-        </Replacer>
-    );
+        </Replacer >;
+
+    const component = create(Component);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
 
-    
+    act(() => {
+        component.root.findAllByType('button')
+            .forEach(button => 
+                button.props.onClick());
+    });
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
 
 });
+
+
+// const button = traverseElementTree(component.toTree(), {
+//     visit(element: React.ReactNode, state: any, children?: ChildrenFunc<React.ReactHTMLElement<HTMLButtonElement> | null, any>): React.ReactHTMLElement<HTMLButtonElement> | null {
+//         const result = children ? children(state) : null;
+//         if (Array.isArray(result)) {
+//             for (let v of result) {
+//                 if (React.isValidElement(v) && v.type === 'button') {
+//                     return v as React.ReactHTMLElement<HTMLButtonElement>;
+//                 }
+//             }
+//             return null;
+//         } else if (result) {
+//             return result;
+//         }
+//         if (React.isValidElement(element) && element.type === 'button') {
+//             return element as React.ReactHTMLElement<HTMLButtonElement>
+//         } else {
+//             return null;
+//         }
+//     }
+// });
