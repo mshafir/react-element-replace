@@ -1,6 +1,6 @@
 {
     "name": "react-element-replace",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "React utility methods that transforms element subtrees, replacing elements following the provided rules.",
     "main": "build/index.js",
     "module": "build/index.es.js",
