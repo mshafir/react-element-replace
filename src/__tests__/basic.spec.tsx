@@ -6,7 +6,7 @@ test("number replace", () => {
     const component = create(
         <Replacer 
             match={x => typeof x === 'number'} 
-            replace={(x: number) => <>{x + 1}</>}>
+            replace={(x: number) => x + 1}>
                 {1}{2}{3}
         </Replacer>
     );

@@ -113,18 +113,20 @@ class TreeElementCounter implements Visitor<number,null> {
 Now we can use this `Visitor` as so:
 
 ```tsx
-    const elements = (
-        <div>1
-            <div>2</div>
-            <div>3
-                <div>4</div>
-                <div>5</div>
-            </div>
-            <div>6</div>
+import { traverseElementTree } from 'react-element-replace';
+
+const elements = (
+    <div>1
+        <div>2</div>
+        <div>3
+            <div>4</div>
+            <div>5</div>
         </div>
-    );
-    let result = traverseElementTree(elements, new TreeElementCounter(), null);
-    expect(result).toEqual(6);
+        <div>6</div>
+    </div>
+);
+let result = traverseElementTree(elements, new TreeElementCounter(), null);
+expect(result).toEqual(6);
 ```
 
 ## rebuild-element
@@ -136,7 +138,7 @@ function rebuildElement(
 ): React.ReactNode
 ```
 
-This function take a parent node and a child or children nodes (aka the result of a `children()` visitor invocation) and recreates the react element use cloneElement. This is necessary if you are modifying an element's children as part of a tree traversal. It is how the replace
+This function take a parent node and a child or children nodes (aka the result of a `children()` visitor invocation) and recreates the react element using `React.cloneElement`. This is necessary if you are modifying an element's children as part of a tree traversal. It is how the replace
 method rebuilds the elements in the tree after the replace as happened.
 
 ## replace-in-tree / Replacer
@@ -177,9 +179,11 @@ Where the ReplacerProps type is
 
 #### Replace numbers with their increment
 ```tsx
+import { Replacer } from 'react-element-replace';
+
 <Replacer 
     match={x => typeof x === 'number'} 
-    replace={(x: number) => <>{x + 1}</>}>
+    replace={x => x + 1}>
         <div>
             {1}
             {2}
@@ -199,9 +203,8 @@ Where the ReplacerProps type is
 #### Replace objects with their JSON.stringify representation
 ```tsx
 <Replacer
-    matchLiteral = { item => typeof item === "object" }
-    replace = {(item: any) => <>{JSON.stringify(item)}</>
-}>
+    matchLiteral={item => typeof item === "object" }
+    replace={item => JSON.stringify(item)} >
     <div>{{ comment: "testing" }}</div>
 </Replacer>
 
@@ -216,8 +219,7 @@ Where the ReplacerProps type is
 ```tsx
 <Replacer
     matchElement="div"
-    replace = {(item: React.ReactElement) => <span {...item.props} />
-}>
+    replace={(item: React.ReactElement) => <span {...item.props} />}>
     <div>A div becomes a span</div>
 </Replacer>
 
