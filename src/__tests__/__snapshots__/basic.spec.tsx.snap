@@ -9,6 +9,27 @@ Array [
 ]
 `;
 
+exports[`divs with spans 1`] = `
+<span
+  className="test"
+>
+  <span
+    style={
+      Object {
+        "backgroundColor": "blue",
+      }
+    }
+  >
+    <span>
+      A div becomes a span
+    </span>
+    <span>
+      Hi
+    </span>
+  </span>
+</span>
+`;
+
 exports[`no-op replace 1`] = `
 <div>
   <div>

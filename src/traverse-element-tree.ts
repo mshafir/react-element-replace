@@ -7,13 +7,13 @@ const {
 export type ChildrenFunc<T, S> = (newState: S) => T | T[];
 
 export interface Visitor<T=any, S=any> {
-    visit(element: React.ReactNode, state: S, children?: ChildrenFunc<T,S>): T;
+    visit(element: React.ReactNode, state: S, children?: (newState: S) => T | T[]): T;
 }
 
 export function traverseElementTree<T=any, S=any>(
     node: React.ReactNode,
     visitor: Visitor<T,S>,
-    state?: any
+    state: S
 ) : T {
     function visit(target: React.ReactNode, children?: ChildrenFunc<T,S>) {
         return visitor.visit(target, state, children);
