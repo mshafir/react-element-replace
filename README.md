@@ -10,12 +10,11 @@ modify components that you may not have access to.
   - [Caveats](#caveats)
   - [traverseElementTree](#traverseelementtree)
     - [Example](#example)
-  - [rebuild-element](#rebuild-element)
-  - [replace-in-tree / Replacer](#replace-in-tree--replacer)
-    - [Examples](#examples)
-      - [Replace numbers with their increment](#replace-numbers-with-their-increment)
-      - [Replace objects with their JSON.stringify representation](#replace-objects-with-their-jsonstringify-representation)
-      - [Replace divs with spans](#replace-divs-with-spans)
+  - [rebuildElement](#rebuildelement)
+  - [replaceInTree / Replacer](#replaceintree--replacer)
+    - [Example: Replace numbers with their increment](#example-replace-numbers-with-their-increment)
+    - [Example: Replace objects with their JSON.stringify representation](#example-replace-objects-with-their-jsonstringify-representation)
+      - [Example: Replace divs with spans](#example-replace-divs-with-spans)
 
 
 ## Install
@@ -129,7 +128,7 @@ let result = traverseElementTree(elements, new TreeElementCounter(), null);
 expect(result).toEqual(6);
 ```
 
-## rebuild-element
+## rebuildElement
 
 ```ts
 function rebuildElement(
@@ -141,7 +140,7 @@ function rebuildElement(
 This function take a parent node and a child or children nodes (aka the result of a `children()` visitor invocation) and recreates the react element using `React.cloneElement`. This is necessary if you are modifying an element's children as part of a tree traversal. It is how the replace
 method rebuilds the elements in the tree after the replace as happened.
 
-## replace-in-tree / Replacer
+## replaceInTree / Replacer
 
 ```ts
 function replaceInTree<S = any>(
@@ -175,9 +174,7 @@ Where the ReplacerProps type is
 }
 ```
 
-### Examples
-
-#### Replace numbers with their increment
+### Example: Replace numbers with their increment
 ```tsx
 import { Replacer } from 'react-element-replace';
 
@@ -200,7 +197,7 @@ import { Replacer } from 'react-element-replace';
 </div>
 ```
 
-#### Replace objects with their JSON.stringify representation
+### Example: Replace objects with their JSON.stringify representation
 ```tsx
 <Replacer
     matchLiteral={item => typeof item === "object" }
@@ -214,7 +211,7 @@ import { Replacer } from 'react-element-replace';
 // Note: normally this throws an error
 ```
 
-#### Replace divs with spans
+#### Example: Replace divs with spans
 
 ```tsx
 <Replacer

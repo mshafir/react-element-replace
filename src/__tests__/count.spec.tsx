@@ -8,7 +8,7 @@ class TreeElementCounter implements Visitor<number,null> {
             childCounts = [childCounts];
         }
         const elementCount = React.isValidElement(element) ? 1 : 0;
-        return childCounts.reduce((count, cur) => count + cur, elementCount);
+        return childCounts.reduce((a, b) => a + b, elementCount);
     }
 }
 
