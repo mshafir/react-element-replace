@@ -5,6 +5,7 @@ many situations where you want to either extend React functionality or
 modify components that you may not have access to. 
 
 - [react-element-replace](#react-element-replace)
+  - [Install](#install)
   - [What is this for](#what-is-this-for)
   - [Caveats](#caveats)
   - [traverseElementTree](#traverseelementtree)
@@ -15,6 +16,14 @@ modify components that you may not have access to.
       - [Replace numbers with their increment](#replace-numbers-with-their-increment)
       - [Replace objects with their JSON.stringify representation](#replace-objects-with-their-jsonstringify-representation)
       - [Replace divs with spans](#replace-divs-with-spans)
+
+
+## Install
+```bash
+yarn add react-element-replace
+# or
+npm install react-element-replace
+```
 
 ## What is this for
 
